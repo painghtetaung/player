@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Search, User } from "lucide-react";
-import { useState } from "react";
-import { usePlayers } from "../../hooks/usePlayers";
+import { Loader2, Search, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useDebounce } from "../../hooks/useDebounce";
+import { useInfinitePlayers } from "../../hooks/useInfinitePlayers";
 
 export const Route = createFileRoute("/_private/players")({
 	component: PlayersPage,
@@ -12,10 +12,52 @@ function PlayersPage() {
 	const [search, setSearch] = useState("");
 	const debouncedSearch = useDebounce(search, 500);
 
-	const { data, isLoading, error } = usePlayers({
+	const {
+		data,
+		isLoading,
+		error,
+		fetchNextPage,
+		hasNextPage,
+		isFetchingNextPage,
+	} = useInfinitePlayers({
 		search: debouncedSearch,
-		per_page: 25,
+		per_page: 10,
 	});
+
+	const loadMoreRef = useRef<HTMLDivElement>(null);
+	const lastFetchTimeRef = useRef<number>(0);
+
+	useEffect(() => {
+		const observer = new IntersectionObserver(
+			(entries) => {
+				const now = Date.now();
+				const timeSinceLastFetch = now - lastFetchTimeRef.current;
+
+				if (
+					entries[0].isIntersecting &&
+					hasNextPage &&
+					!isFetchingNextPage &&
+					timeSinceLastFetch > 1000
+				) {
+					lastFetchTimeRef.current = now;
+					fetchNextPage();
+				}
+			},
+			{ threshold: 0.1 },
+		);
+
+		if (loadMoreRef.current) {
+			observer.observe(loadMoreRef.current);
+		}
+
+		return () => {
+			if (loadMoreRef.current) {
+				observer.unobserve(loadMoreRef.current);
+			}
+		};
+	}, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+	const allPlayers = data?.pages.flatMap((page) => page.data) ?? [];
 
 	return (
 		<div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
@@ -50,16 +92,26 @@ function PlayersPage() {
 				)}
 
 				{error && (
-					<div className="bg-red-50 border border-red-200 text-red-700 px-6 py-4 rounded-lg">
-						<p className="font-medium">Error loading players</p>
+					<div
+						className={`mb-4 border px-6 py-4 rounded-lg ${
+							error.message?.includes("Rate limit")
+								? "bg-yellow-50 border-yellow-200 text-yellow-800"
+								: "bg-red-50 border-red-200 text-red-700"
+						}`}
+					>
+						<p className="font-medium">
+							{error.message?.includes("Rate limit")
+								? "Rate Limit Reached"
+								: "Error loading players"}
+						</p>
 						<p className="text-sm mt-1">{error.message}</p>
 					</div>
 				)}
 
-				{data && !isLoading && (
+				{!isLoading && allPlayers.length > 0 && (
 					<>
 						<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-							{data.data.map((player) => (
+							{allPlayers.map((player) => (
 								<div
 									key={player.id}
 									className="bg-white rounded-xl shadow-md p-6 border border-gray-200 hover:shadow-lg transition-shadow"
@@ -90,14 +142,23 @@ function PlayersPage() {
 							))}
 						</div>
 
-						<div className="mt-6 text-center text-sm text-gray-600">
-							Showing {data.data.length} players
-							{data.meta.next_cursor && " • More available"}
+						<div ref={loadMoreRef} className="mt-8 text-center">
+							{isFetchingNextPage && (
+								<div className="flex items-center justify-center gap-2 text-indigo-600">
+									<Loader2 className="w-6 h-6 animate-spin" />
+									<span className="font-medium">Loading more players...</span>
+								</div>
+							)}
+							{!hasNextPage && (
+								<p className="text-sm text-gray-500">
+									No more players to load • Total: {allPlayers.length}
+								</p>
+							)}
 						</div>
 					</>
 				)}
 
-				{data && data.data.length === 0 && !isLoading && (
+				{!isLoading && allPlayers.length === 0 && (
 					<div className="text-center py-12">
 						<User className="w-16 h-16 text-gray-400 mx-auto mb-4" />
 						<p className="text-lg text-gray-600">No players found</p>
