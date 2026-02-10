@@ -35,7 +35,12 @@ const loadAuthFromStorage = (): AuthState => {
 			};
 		}
 	} catch (error) {
-		console.error("Failed to load auth state from localStorage:", error);
+		return {
+			user: null,
+			isAuthenticated: false,
+			isLoading: false,
+			error: error as string,
+		};
 	}
 
 	return {
@@ -70,8 +75,8 @@ const authSlice = createSlice({
 						isAuthenticated: true,
 					}),
 				);
-			} catch (error) {
-				console.error("Failed to save auth state to localStorage:", error);
+			} catch (_) {
+				throw new Error("Failed to save auth state to localStorage");
 			}
 		},
 		loginFailure: (state, action: PayloadAction<string>) => {

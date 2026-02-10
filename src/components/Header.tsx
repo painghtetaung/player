@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, LogIn, LogOut, Menu, User, X } from "lucide-react";
+import { LayoutDashboard, LogIn, LogOut, Menu, User, X, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../lib/auth";
 
@@ -80,18 +80,32 @@ export default function Header() {
 					{!mounted ? (
 						<div className="h-12 bg-gray-800 rounded-lg animate-pulse" />
 					) : isAuthenticated ? (
-						<Link
-							to="/dashboard"
-							onClick={() => setIsOpen(false)}
-							className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-							activeProps={{
-								className:
-									"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
-							}}
-						>
-							<LayoutDashboard size={20} />
-							<span className="font-medium">Dashboard</span>
-						</Link>
+						<>
+							<Link
+								to="/dashboard"
+								onClick={() => setIsOpen(false)}
+								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+								activeProps={{
+									className:
+										"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
+								}}
+							>
+								<LayoutDashboard size={20} />
+								<span className="font-medium">Dashboard</span>
+							</Link>
+							<Link
+								to="/players"
+								onClick={() => setIsOpen(false)}
+								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+								activeProps={{
+									className:
+										"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
+								}}
+							>
+								<Users size={20} />
+								<span className="font-medium">Players</span>
+							</Link>
+						</>
 					) : (
 						<Link
 							to="/login"

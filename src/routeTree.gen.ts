@@ -13,6 +13,7 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as PrivateRouteImport } from './routes/_private'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PublicLoginRouteImport } from './routes/_public/login'
+import { Route as PrivatePlayersRouteImport } from './routes/_private/players'
 import { Route as PrivateDashboardRouteImport } from './routes/_private/dashboard'
 
 const PublicRoute = PublicRouteImport.update({
@@ -33,6 +34,11 @@ const PublicLoginRoute = PublicLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PublicRoute,
 } as any)
+const PrivatePlayersRoute = PrivatePlayersRouteImport.update({
+  id: '/players',
+  path: '/players',
+  getParentRoute: () => PrivateRoute,
+} as any)
 const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
@@ -42,11 +48,13 @@ const PrivateDashboardRoute = PrivateDashboardRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/players': typeof PrivatePlayersRoute
   '/login': typeof PublicLoginRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof PrivateDashboardRoute
+  '/players': typeof PrivatePlayersRoute
   '/login': typeof PublicLoginRoute
 }
 export interface FileRoutesById {
@@ -55,19 +63,21 @@ export interface FileRoutesById {
   '/_private': typeof PrivateRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_private/dashboard': typeof PrivateDashboardRoute
+  '/_private/players': typeof PrivatePlayersRoute
   '/_public/login': typeof PublicLoginRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/login'
+  fullPaths: '/' | '/dashboard' | '/players' | '/login'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/login'
+  to: '/' | '/dashboard' | '/players' | '/login'
   id:
     | '__root__'
     | '/'
     | '/_private'
     | '/_public'
     | '/_private/dashboard'
+    | '/_private/players'
     | '/_public/login'
   fileRoutesById: FileRoutesById
 }
@@ -107,6 +117,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_private/players': {
+      id: '/_private/players'
+      path: '/players'
+      fullPath: '/players'
+      preLoaderRoute: typeof PrivatePlayersRouteImport
+      parentRoute: typeof PrivateRoute
+    }
     '/_private/dashboard': {
       id: '/_private/dashboard'
       path: '/dashboard'
@@ -119,10 +136,12 @@ declare module '@tanstack/react-router' {
 
 interface PrivateRouteChildren {
   PrivateDashboardRoute: typeof PrivateDashboardRoute
+  PrivatePlayersRoute: typeof PrivatePlayersRoute
 }
 
 const PrivateRouteChildren: PrivateRouteChildren = {
   PrivateDashboardRoute: PrivateDashboardRoute,
+  PrivatePlayersRoute: PrivatePlayersRoute,
 }
 
 const PrivateRouteWithChildren =
