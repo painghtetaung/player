@@ -2,10 +2,19 @@
   "buildCommand": "pnpm build",
   "installCommand": "pnpm install",
   "framework": null,
-  "rewrites": [
+  "outputDirectory": "dist/client",
+  "routes": [
     {
-      "source": "/(.*)",
-      "destination": "/api/server"
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/api/server"
     }
   ]
 }
