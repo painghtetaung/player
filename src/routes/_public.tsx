@@ -7,14 +7,14 @@ export const Route = createFileRoute("/_public")({
 });
 
 function PublicLayout() {
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated, isLoading } = useAuth();
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (isAuthenticated) {
-			navigate({ to: "/dashboard" });
+		if (!isLoading && isAuthenticated) {
+			navigate({ to: "/players" });
 		}
-	}, [isAuthenticated, navigate]);
+	}, [isAuthenticated, isLoading, navigate]);
 
 	return <Outlet />;
 }

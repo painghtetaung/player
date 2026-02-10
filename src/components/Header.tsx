@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { LayoutDashboard, LogIn, LogOut, Menu, User, X, Users } from "lucide-react";
+import { LogIn, LogOut, Menu, User, X, Users, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../lib/auth";
 
@@ -30,12 +30,8 @@ export default function Header() {
 						<Menu size={24} />
 					</button>
 					<h1 className="ml-4 text-xl font-semibold">
-						<Link to="/dashboard">
-							<img
-								src="/tanstack-word-logo-white.svg"
-								alt="TanStack Logo"
-								className="h-10"
-							/>
+						<Link to="/players" className="text-white hover:text-gray-200 transition-colors">
+							Player Manager
 						</Link>
 					</h1>
 				</div>
@@ -82,18 +78,6 @@ export default function Header() {
 					) : isAuthenticated ? (
 						<>
 							<Link
-								to="/dashboard"
-								onClick={() => setIsOpen(false)}
-								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
-								activeProps={{
-									className:
-										"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
-								}}
-							>
-								<LayoutDashboard size={20} />
-								<span className="font-medium">Dashboard</span>
-							</Link>
-							<Link
 								to="/players"
 								onClick={() => setIsOpen(false)}
 								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
@@ -104,6 +88,18 @@ export default function Header() {
 							>
 								<Users size={20} />
 								<span className="font-medium">Players</span>
+							</Link>
+							<Link
+								to="/teams"
+								onClick={() => setIsOpen(false)}
+								className="flex items-center gap-3 p-3 rounded-lg hover:bg-gray-800 transition-colors mb-2"
+								activeProps={{
+									className:
+										"flex items-center gap-3 p-3 rounded-lg bg-cyan-600 hover:bg-cyan-700 transition-colors mb-2",
+								}}
+							>
+								<Shield size={20} />
+								<span className="font-medium">Teams</span>
 							</Link>
 						</>
 					) : (

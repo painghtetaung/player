@@ -17,6 +17,7 @@ interface AuthContext {
 	user: User | null;
 	login: (user: User) => void;
 	logout: () => void;
+	isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContext | null>(null);
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContext | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
 	const [user, setUser] = useState<User | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [isLoading, setIsLoading] = useState(true);
 
 	useEffect(() => {
 		const savedAuth = localStorage.getItem("auth");
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 				console.error("Failed to load auth from localStorage:", error);
 			}
 		}
+		setIsLoading(false);
 	}, []);
 
 	const login = (userData: User) => {
@@ -57,7 +60,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	};
 
 	return (
-		<AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+		<AuthContext.Provider
+			value={{ isAuthenticated, user, login, logout, isLoading }}
+		>
 			{children}
 		</AuthContext.Provider>
 	);

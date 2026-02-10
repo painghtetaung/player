@@ -7,20 +7,20 @@ export const Route = createFileRoute("/_private")({
 });
 
 function PrivateLayout() {
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated, isLoading } = useAuth();
 	const navigate = useNavigate();
 
 	useEffect(() => {
-		if (!isAuthenticated) {
+		if (!isLoading && !isAuthenticated) {
 			navigate({ to: "/login" });
 		}
-	}, [isAuthenticated, navigate]);
+	}, [isAuthenticated, isLoading, navigate]);
 
-	if (!isAuthenticated) {
+	if (isLoading || !isAuthenticated) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
 				<div className="flex flex-col items-center gap-4">
-					<div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+					<div className="w-16 h-16 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
 					<p className="text-lg text-gray-600 font-medium">Loading...</p>
 				</div>
 			</div>
