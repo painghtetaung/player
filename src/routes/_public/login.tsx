@@ -88,22 +88,6 @@ function LoginPage() {
 							/>
 						</div>
 
-						<div className="flex items-center justify-between">
-							<label className="flex items-center">
-								<input
-									type="checkbox"
-									className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
-								/>
-								<span className="ml-2 text-sm text-gray-600">Remember me</span>
-							</label>
-							<a
-								href="#"
-								className="text-sm text-indigo-600 hover:text-indigo-700 font-medium"
-							>
-								Forgot password?
-							</a>
-						</div>
-
 						<button
 							type="submit"
 							disabled={isLoading}
@@ -112,18 +96,6 @@ function LoginPage() {
 							{isLoading ? "Signing in..." : "Sign In"}
 						</button>
 					</form>
-
-					<div className="mt-6 text-center">
-						<p className="text-sm text-gray-600">
-							Don't have an account?{" "}
-							<a
-								href="#"
-								className="text-indigo-600 hover:text-indigo-700 font-medium"
-							>
-								Sign up
-							</a>
-						</p>
-					</div>
 				</div>
 			</div>
 		</div>
